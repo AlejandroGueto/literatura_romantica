@@ -1,0 +1,402 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Ghost, Book, Sword, Landmark, Scroll, Unlock, Lock, RefreshCw, 
+  Skull, PenTool, Wind, Compass, Eye, BookOpen, AlertCircle, 
+  HelpCircle, Target, ListChecks, Hash, Music, Type, ArrowDownAZ 
+} from 'lucide-react';
+
+const App = () => {
+  const [stage, setStage] = useState('intro');
+  const [subStage, setSubStage] = useState(0);
+  const [input, setInput] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [showText, setShowText] = useState(false);
+  const [hintVisible, setHintVisible] = useState(false);
+  const [isExplaining, setIsExplaining] = useState(false);
+
+  const normalize = (str) => {
+    return str
+      .toLowerCase()
+      .trim()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ñ/g, "n")
+      .replace(/['"«»]/g, ""); 
+  };
+
+  const stages = [
+    'intro', 'neoclasicismo', 'contexto', 'espronceda_pirata', 
+    'espronceda_reo', 'becquer_rimas', 'becquer_leyendas', 
+    'rosalia', 'rivas', 'zorrilla', 'larra', 'finale'
+  ];
+
+  const content = {
+    neoclasicismo: {
+      title: "Prólogo: La Razón Ilustrada",
+      author: "Leandro Fdez. de Moratín",
+      work: "El sí de las niñas",
+      text: `DON DIEGO: Ve aquí los frutos de la educación. Esto es lo que se llama criar bien a una niña: enseñarla a que mienta y oculte las pasiones más inocentes con una pérfida disimulación... Se las autoriza para que finjan aborrecer lo que más desean... Todo se permite, menos la sinceridad. ¡Maldita educación, que solo sirve para formar esclavos y traidores!`,
+      explanation: "El Neoclasicismo buscaba la utilidad social y la crítica de costumbres. Moratín denuncia aquí cómo la educación represiva obliga a las jóvenes a mentir sobre sus verdaderos sentimientos, un preludio a la explosión de libertad que traerá el Romanticismo.",
+      questions: [
+        {
+          instruction: "Según el texto de Moratín, ¿qué valor fundamental se pierde debido a la educación rígida de las niñas?",
+          options: ["La obediencia", "La sinceridad", "La elegancia"],
+          answer: "la sinceridad"
+        }
+      ]
+    },
+    contexto: {
+      title: "I. El Origen: Sturm und Drang",
+      explanation: "El Romanticismo no nació en España. Surgió a finales del XVIII en Alemania e Inglaterra. El lema 'Sturm und Drang' (Tormenta e ímpetu) resumía el rechazo a las reglas neoclásicas para favorecer el 'genio' y la 'fuerza' del individuo.",
+      questions: [
+        {
+          instruction: "Asocia: ¿Qué movimiento prioriza el SENTIMIENTO y la LIBERTAD frente a la RAZÓN y las REGLAS?",
+          options: ["Ilustración", "Romanticismo", "Renacimiento"],
+          answer: "romanticismo"
+        }
+      ]
+    },
+    espronceda_pirata: {
+      title: "II. La Canción del Pirata",
+      author: "José de Espronceda",
+      text: `Con diez cañones por banda, / viento en popa, a toda vela, / no corta el mar, sino vuela / un velero bergantín. / Bajel pirata que llaman, / por su bravura, El Temido, / en todo mar conocido / del uno al otro confín.
+
+Que es mi barco mi tesoro,
+que es mi dios la libertad,
+mi ley, la fuerza y el viento,
+mi única patria, la mar.
+
+Allá muevan feroz guerra / ciegos reyes / por un palmo más de tierra; / que yo tengo aquí por mío / cuanto abarca el mar bravío, / a quien nadie impuso leyes.`,
+      explanation: "Espronceda es el máximo exponente del romanticismo liberal. El pirata es el héroe romántico por excelencia: un ser marginal que vive fuera de la ley de los 'ciegos reyes' y solo reconoce la libertad absoluta.",
+      questions: [
+        {
+          instruction: "Completa el lema del pirata: 'Que es mi barco mi _________'",
+          type: "input",
+          answer: "tesoro",
+          hint: "Fíjate en la primera línea del estribillo."
+        },
+        {
+          instruction: "¿Cómo llama el pirata a los monarcas que pelean por la tierra en lugar de buscar la libertad del mar?",
+          options: ["Reyes poderosos", "Ciegos reyes", "Reyes tiranos"],
+          answer: "ciegos reyes"
+        }
+      ]
+    },
+    espronceda_reo: {
+      title: "III. El Reo de Muerte",
+      author: "José de Espronceda",
+      text: `Para un hombre que va a morir / el sol no alumbra, el viento no suena... / ¡Maldición a la mano que me encadena! / ¡Maldición al juez que me condenó! / ¿Por qué yo soy un reo y él es un juez? / ¿Por qué si la vida es un don del cielo, / me la quita el hombre con tanto anhelo, / si es que la vida Dios mismo me dio?
+
+¡Y el verdugo?... El verdugo... ese hombre... / ¿Cómo pudo su alma nacer? / ¿Cómo pudo su madre en su seno / a ese monstruo de sangre tener?`,
+      explanation: "Espronceda muestra aquí su faceta social. Al defender al reo, cuestiona la justicia humana y personifica el horror en la figura del verdugo, un ser que el poeta considera deshumanizado.",
+      questions: [
+        {
+          instruction: "¿A qué figura institucional describe el reo como un 'monstruo de sangre'?",
+          type: "input",
+          answer: "verdugo",
+          hint: "Es quien ejecuta la sentencia de muerte."
+        },
+        {
+          instruction: "¿Qué figura retórica se usa al repetir '¡Maldición!' al principio de los versos para enfatizar el dolor?",
+          options: ["Anáfora", "Hipérbaton", "Metáfora"],
+          answer: "anafora"
+        }
+      ]
+    },
+    becquer_rimas: {
+      title: "IV. Las Rimas de Bécquer",
+      author: "Gustavo Adolfo Bécquer",
+      text: `RIMA XXI: ¿Qué es poesía? dices mientras clavas / en mi pupila tu pupila azul. / ¿Qué es poesía? ¿Y tú me lo preguntas? / Poesía... eres tú.
+
+RIMA LIII: Volverán las oscuras golondrinas / en tu balcón sus nidos a colgar, / y otra vez con el ala a sus cristales / jugando llamarán. / Pero aquellas que el vuelo refrenaban / tu hermosura y mi dicha a contemplar, / aquellas que aprendieron nuestros nombres... / ¡esas... no volverán! / ... / Volverán las tupidas madreselvas / de tu jardín las tapias a escalar... / pero aquellas cuajadas de rocío / cuyas gotas mirábamos temblar... / ¡esas no volverán! / ... / como yo te he querido... desengáñate: / ¡así no te querrán!`,
+      explanation: "Bécquer es el poeta de la intimidad y el sentimiento contenido. Sus rimas suelen ser breves, con rima asonante y un lenguaje sencillo pero cargado de simbolismo (golondrinas, pupilas).",
+      questions: [
+        {
+          instruction: "En la famosa Rima XXI, ¿con quién identifica Bécquer la esencia de la poesía?",
+          type: "input",
+          answer: "tu",
+          hint: "Termina el poema con: 'Poesía... eres ____'."
+        },
+        {
+          instruction: "Ordena los elementos de la Rima LIII según su aparición (escribe los índices separados por comas, ej: 0,1,2):",
+          type: "order",
+          items: ["Las oscuras golondrinas", "Las tupidas madreselvas", "Como yo te he querido"],
+          answer: "0,1,2",
+          hint: "Sigue el orden del poema: primero las aves, luego las plantas y finalmente el sentimiento personal del autor."
+        }
+      ]
+    },
+    becquer_leyendas: {
+      title: "V. El Monte de las Ánimas",
+      work: "Bécquer - Leyendas",
+      text: `Dicen que desde que llegó la noche de Difuntos, las ánimas de los guerreros templarios salen de sus tumbas en Soria... Beatriz, por un capricho orgulloso, envió a Alonso al monte a buscar una banda azul. Al amanecer, Alonso estaba muerto devorado por los lobos... y Beatriz vio horrorizada la banda azul, ensangrentada, sobre su reclinatorio antes de morir de espanto.`,
+      explanation: "Las Leyendas introducen el elemento sobrenatural y gótico. El ambiente nocturno, los cementerios y el castigo por el orgullo son temas constantes.",
+      questions: [
+        {
+          instruction: "¿En qué ciudad española se sitúa la leyenda 'El Monte de las Ánimas'?",
+          type: "input",
+          answer: "soria",
+          hint: "Ciudad castellana donde Bécquer situó muchos relatos."
+        }
+      ]
+    },
+    rosalia: {
+      title: "VI. Rosalía de Castro",
+      author: "Rosalía de Castro",
+      text: `Dicen que no hablan las plantas, ni las fuentes, ni los pájaros... / de mí murmuran y exclaman: / —Ahí va la loca, soñando / con la eterna primavera de la vida y de los campos... / y ya, bien pronto, bien pronto, tendrá los cabellos canos, / y ve temblando, aterida, que hay hielo en los prados.`,
+      explanation: "Rosalía representa el posromanticismo gallego. Sus textos expresan la 'saudade' (soledad y nostalgia) y personifican la naturaleza para reflejar su propia angustia vital.",
+      questions: [
+        {
+          instruction: "Rosalía dice que las fuentes y plantas hablan. ¿Qué nombre le dan a ella en sus murmullos?",
+          type: "input",
+          answer: "la loca",
+          hint: "Dice: 'Ahí va...'"
+        }
+      ]
+    },
+    rivas: {
+      title: "VII. El Duque de Rivas",
+      author: "Ángel de Saavedra",
+      work: "Don Álvaro o la fuerza del sino",
+      text: `DON ÁLVARO: ¡Inútil es que quiera el hombre luchar con su destino! ¡El cielo me persigue! He matado al padre, al hermano de mi Leonor... ¡Aniquilación! ¡Exterminio! (Se arroja desde un precipicio mientras los monjes cantan el Miserere).`,
+      explanation: "Esta obra marca el triunfo del Romanticismo en España (1834). El tema central es el 'Sino' o destino fatal del que el héroe no puede escapar, sin importar su valentía.",
+      questions: [
+        {
+          instruction: "¿Cómo termina la vida de Don Álvaro al no poder escapar de su destino?",
+          options: ["Se casa", "Se suicida", "Es perdonado"],
+          answer: "se suicida"
+        }
+      ]
+    },
+    zorrilla: {
+      title: "VIII. Don Juan Tenorio",
+      author: "José Zorrilla",
+      text: `¡Ah! ¿No es cierto, ángel de amor, / que en esta apartada orilla / más pura la luna brilla / y se respira mejor? / Esta aura que vaga, llena / de los sencillos olores / de las campesinas flores / que brota esa orilla amena... / ¿no es cierto, paloma mía, / que están respirando amor?`,
+      explanation: "Zorrilla recrea el mito de Don Juan dándole una novedad romántica: la salvación por el amor verdadero de Doña Inés. El lenguaje es sonoro y muy musical.",
+      questions: [
+        {
+          instruction: "¿A qué joven novicia intenta seducir Don Juan con estos versos famosos?",
+          type: "input",
+          answer: "dona ines",
+          hint: "Es la hija del comendador."
+        }
+      ]
+    },
+    larra: {
+      title: "IX. Larra y la Sátira",
+      author: "Mariano José de Larra (Fígaro)",
+      text: `- ¿Cuándo podré ver al director? - Vuelva usted mañana. / - ¿Estarán los papeles para el jueves? - Vuelva usted mañana. / Aquel 'mañana' era la tumba de todas mis esperanzas... La pereza es nuestro pecado nacional. Todo se deja para el día siguiente.`,
+      explanation: "Larra fue el primer gran periodista de opinión. Usó la sátira y la ironía para criticar el atraso y la burocracia de España, reflejando su desengaño con el país.",
+      questions: [
+        {
+          instruction: "¿Qué defecto nacional critica Larra en este artículo?",
+          options: ["La avaricia", "La pereza", "La ira"],
+          answer: "la pereza"
+        }
+      ]
+    }
+  };
+
+  const handleAction = (val) => {
+    const stageKey = stages[stages.indexOf(stage)];
+    const currentQuestion = content[stageKey].questions[subStage];
+    const normIn = normalize(val);
+    const normAns = normalize(currentQuestion.answer);
+
+    if (normIn === normAns) {
+      setFeedback("¡Brillante!");
+      if (subStage < content[stageKey].questions.length - 1) {
+        setSubStage(subStage + 1);
+        setInput("");
+      } else {
+        setIsExplaining(true);
+      }
+    } else {
+      setFeedback("Esa llave no encaja en la cerradura...");
+    }
+  };
+
+  const nextStage = () => {
+    setIsExplaining(false);
+    setSubStage(0);
+    setInput("");
+    setFeedback("");
+    setShowText(false);
+    const nextIndex = stages.indexOf(stage) + 1;
+    setStage(stages[nextIndex]);
+  };
+
+  const renderStage = () => {
+    const currentData = content[stage];
+
+    if (stage === 'intro') {
+      return (
+        <div className="text-center space-y-10 animate-in fade-in zoom-in">
+          <Skull className="w-36 h-36 mx-auto text-red-950 animate-pulse drop-shadow-2xl" />
+          <h1 className="text-7xl font-serif font-bold text-red-950 tracking-tighter">SOMBRAS <br/> ROMÁNTICAS</h1>
+          <p className="text-2xl italic text-gray-800 max-w-xl mx-auto border-x-4 border-red-900 px-8 py-4 bg-white/40">"Para escapar de este sueño, no basta con razonar. Debes sentir la pasión de los textos originales."</p>
+          <button onClick={() => setStage('neoclasicismo')} className="px-16 py-6 bg-red-950 text-white font-serif text-3xl hover:bg-black transition-all border-2 border-red-700 shadow-xl">ABRIR EL LIBRO</button>
+        </div>
+      );
+    }
+
+    if (isExplaining) {
+      return (
+        <div className="space-y-6 animate-in zoom-in">
+          <div className="bg-amber-50 p-10 border-8 border-double border-red-900 shadow-2xl relative">
+            <BookOpen className="absolute -top-6 -right-6 w-16 h-16 text-red-900 bg-white rounded-full p-2 border-2 border-red-900" />
+            <h3 className="text-3xl font-serif font-bold text-red-950 mb-6 underline decoration-red-200">Sabiduría Literaria</h3>
+            <p className="text-xl text-gray-900 leading-relaxed italic">
+              {currentData.explanation}
+            </p>
+          </div>
+          <button onClick={nextStage} className="w-full py-5 bg-red-950 text-white font-serif text-2xl font-bold flex items-center justify-center gap-3 hover:bg-black transition-all">
+            SIGUIENTE CAPÍTULO <Unlock size={24} />
+          </button>
+        </div>
+      );
+    }
+
+    if (stage === 'finale') {
+      return (
+        <div className="text-center space-y-10 animate-in zoom-in">
+          <div className="relative inline-block">
+             <Landmark className="w-40 h-40 mx-auto text-amber-700" />
+             <Unlock className="absolute top-0 right-0 text-green-600 w-16 h-16" />
+          </div>
+          <h2 className="text-7xl font-serif text-red-950 font-bold tracking-widest">¡LIBERTAD!</h2>
+          <p className="text-2xl font-serif italic text-gray-700">Has dominado los textos del siglo XIX.</p>
+          <button onClick={() => window.location.reload()} className="px-12 py-5 bg-black text-white font-bold text-xl hover:bg-red-900 transition-all">REPETIR EXPERIENCIA</button>
+        </div>
+      );
+    }
+
+    const currentQ = currentData.questions[subStage];
+
+    return (
+      <div className="space-y-8 animate-in slide-in-from-right max-h-[85vh] overflow-y-auto pr-4 custom-scrollbar">
+        <div className="flex justify-between items-end border-b-4 border-red-900 pb-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.4em] text-red-800 font-bold mb-2">Canto {stages.indexOf(stage)}</p>
+            <h2 className="text-4xl font-serif font-bold text-red-950">{currentData.title}</h2>
+          </div>
+          <span className="text-sm font-bold bg-red-950 text-white px-4 py-1 rounded-full">Prueba {subStage + 1} de {currentData.questions.length}</span>
+        </div>
+
+        {currentData.text && (
+          <div className="relative">
+            <div className={`p-10 bg-[#fffdf5] border-l-[12px] border-red-900 shadow-xl font-serif italic text-xl leading-relaxed transition-all duration-700 ${!showText ? 'blur-xl opacity-20 select-none' : 'opacity-100'}`}>
+              <div className="mb-4 flex items-center gap-2">
+                <PenTool size={20} className="text-red-900" />
+                <span className="font-bold text-sm uppercase tracking-widest text-red-950">
+                  {currentData.author ? currentData.author : currentData.work}
+                </span>
+              </div>
+              <div className="space-y-4">
+                {currentData.text.split('\n').map((l, i) => (
+                   <p key={i} className={l.includes('/') ? 'not-italic font-sans text-sm text-gray-500' : ''}>
+                     {l}
+                   </p>
+                ))}
+              </div>
+            </div>
+            {!showText && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                <button onClick={() => setShowText(true)} className="px-10 py-6 bg-red-950 text-white flex items-center gap-4 shadow-[0_15px_30px_rgba(0,0,0,0.5)] hover:scale-105 transition-transform text-2xl font-serif border-2 border-white">
+                  <Eye size={28} /> DESPLEGAR PERGAMINO
+                </button>
+                <p className="text-red-950 font-bold bg-white/80 px-4 py-1 rounded-full uppercase text-xs tracking-widest">Debes leer el texto para hallar la clave</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="bg-white p-8 border-4 border-red-50 shadow-2xl space-y-6 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-2 h-full bg-red-900 opacity-20"></div>
+          <p className="text-2xl font-serif text-gray-950 flex gap-4">
+            <Target className="text-red-800 shrink-0 w-8 h-8" /> {currentQ.instruction}
+          </p>
+
+          {currentQ.type === 'order' ? (
+            <div className="space-y-3">
+              <p className="text-sm text-gray-500 italic font-medium">Escribe la combinación de números (ej: 0,1,2) basándote en la lista:</p>
+              {currentQ.items.map((it, idx) => (
+                <div key={idx} className="p-4 border-2 border-gray-100 bg-gray-50 flex justify-between items-center rounded-sm">
+                  <span className="font-serif"><span className="font-bold text-red-900 mr-2">[{idx}]</span> {it}</span>
+                  <Hash className="text-gray-300" size={16} />
+                </div>
+              ))}
+              <input 
+                type="text" 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
+                onKeyDown={(e) => e.key === 'Enter' && handleAction(input)}
+                placeholder="Ejemplo: 0,1,2" 
+                className="w-full p-4 border-2 border-red-900 font-mono text-center text-xl" 
+              />
+              <button onClick={() => handleAction(input)} className="w-full py-4 bg-red-900 text-white font-bold uppercase tracking-[0.3em] hover:bg-black transition-all">ORDENAR CRONOLÓGICAMENTE</button>
+            </div>
+          ) : currentQ.options ? (
+            <div className="grid grid-cols-1 gap-4">
+              {currentQ.options.map(o => (
+                <button key={o} onClick={() => handleAction(o)} className="p-6 border-2 border-gray-100 hover:border-red-900 hover:bg-red-50 text-left font-serif text-xl transition-all shadow-sm flex justify-between items-center group">
+                  {o}
+                  <Unlock className="opacity-0 group-hover:opacity-20" />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <input 
+                type="text" 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
+                onKeyDown={(e) => e.key === 'Enter' && handleAction(input)} 
+                className="p-6 border-b-8 border-red-900 bg-gray-50 text-3xl font-serif text-red-950 focus:bg-white transition-colors outline-none" 
+                placeholder="Escribe la palabra clave..." 
+              />
+              <button onClick={() => handleAction(input)} className="py-6 bg-red-900 text-white font-serif text-2xl font-bold uppercase tracking-[0.4em] hover:bg-black transition-all shadow-lg">RESOLVER</button>
+            </div>
+          )}
+          
+          <div className="flex flex-col items-center gap-4">
+            {feedback && <div className={`text-2xl font-bold animate-bounce ${feedback.includes('¡') ? 'text-green-700' : 'text-red-700'}`}>{feedback}</div>}
+            
+            <button onClick={() => setHintVisible(!hintVisible)} className="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-widest hover:text-red-900 transition-colors">
+              <HelpCircle size={16} /> {hintVisible ? "Ocultar pista" : "Pedir auxilio técnico"}
+            </button>
+            {hintVisible && (
+              <div className="bg-amber-50 text-amber-950 p-4 text-center italic border-2 border-amber-200 w-full animate-in slide-in-from-top-2">
+                Pista: {currentQ.hint}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-[#080404] flex items-center justify-center p-4">
+      <div className="fixed inset-0 opacity-15 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"></div>
+      <main className="relative z-10 w-full max-w-5xl bg-[#fdfaf1] border-[20px] border-double border-[#5a0000] p-8 md:p-14 shadow-[0_0_150px_rgba(0,0,0,1)] rounded-sm min-h-[85vh] flex flex-col justify-center overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 p-8 opacity-40"><Compass size={80} className="text-red-900" /></div>
+        <div className="absolute bottom-0 right-0 p-8 opacity-40 rotate-180"><Compass size={80} className="text-red-900" /></div>
+        
+        {renderStage()}
+        
+        <footer className="mt-12 pt-8 border-t-2 border-red-100 text-center opacity-30 hover:opacity-100 transition-opacity">
+          <p className="text-[12px] uppercase tracking-[0.6em] font-sans text-gray-500">Antología Literaria Interactiva • El Romanticismo en España</p>
+        </footer>
+      </main>
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #fdfaf1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #6e0000; border-radius: 10px; }
+      `}</style>
+    </div>
+  );
+};
+
+export default App;
