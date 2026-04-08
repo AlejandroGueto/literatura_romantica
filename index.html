@@ -3,269 +3,438 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escape Room: Sombras Románticas</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Escape Room: Sombras Románticas - Edición Integral</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=EB+Garamond:ital,wght@0,400;0,700;1,400;1,700&family=Dancing+Script:wght@700&display=swap');
         
         :root {
-            --vintage-paper: #fdfaf1;
-            --gothic-red: #5a0000;
+            --parchment: #f4e4bc;
+            --ink: #1a1a1a;
+            --blood: #660000;
+            --gold: #c5a059;
         }
 
         body {
-            background-color: #080404;
-            color: #1a1a1a;
+            background-color: #050505;
+            color: var(--ink);
+            font-family: 'EB Garamond', serif;
             overflow-x: hidden;
         }
 
-        .font-serif-vintage { font-family: 'EB+Garamond', serif; }
         .font-gothic { font-family: 'Cinzel', serif; }
+        .font-serif-vintage { font-family: 'EB Garamond', serif; }
+
+        .parchment-card {
+            background: linear-gradient(to bottom right, #f4e4bc, #e2d1a4);
+            box-shadow: 0 0 30px rgba(0,0,0,0.7), inset 0 0 100px rgba(139, 69, 19, 0.15);
+            position: relative;
+            border: 3px solid #3d2b1f;
+        }
+
+        .parchment-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            pointer-events: none;
+            opacity: 0.4;
+        }
 
         .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #fdfaf1; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #6e0000; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1a1a1a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--blood); border-radius: 4px; }
 
-        .blur-text {
-            filter: blur(12px);
-            opacity: 0.2;
-            user-select: none;
-            transition: all 0.7s ease;
+        .burn-edge { box-shadow: inset 0 0 50px #3d2b1f; }
+
+        .btn-gothic {
+            background: var(--blood);
+            color: white;
+            font-family: 'Cinzel', serif;
+            transition: all 0.3s ease;
+            border: 1px solid var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .unblur-text {
-            filter: blur(0);
-            opacity: 1;
+        .btn-gothic:hover {
+            background: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 0, 0, 0.6);
         }
 
-        .animate-fade-in { animation: fadeIn 0.5s ease-out; }
+        .fade-in { animation: fadeIn 0.8s ease-out forwards; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glow-gold { text-shadow: 0 0 15px rgba(197, 160, 89, 0.6); }
+        
+        .blur-text {
+            filter: blur(10px);
+            opacity: 0.3;
+            user-select: none;
+            transition: all 0.8s ease;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 selection:bg-red-900 selection:text-white">
 
-    <!-- Fondo decorativo -->
-    <div class="fixed inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"></div>
+    <div class="fixed inset-0 opacity-20 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] z-50"></div>
+    <div class="fixed inset-0 pointer-events-none bg-gradient-to-b from-black via-transparent to-black z-40"></div>
 
-    <main id="game-container" class="relative z-10 w-full max-w-5xl bg-[#fdfaf1] border-[16px] border-double border-[#5a0000] p-6 md:p-12 shadow-[0_0_100px_rgba(0,0,0,0.8)] rounded-sm min-h-[80vh] flex flex-col justify-center transition-all duration-500">
-        <!-- El contenido se genera dinámicamente con JS -->
+    <main id="app" class="relative z-10 w-full max-w-6xl min-h-[90vh] flex flex-col transition-all duration-700">
+        <!-- Contenido dinámico -->
     </main>
 
     <script>
-        // --- DATOS DEL JUEGO ---
+        // --- BASE DE DATOS LITERARIA COMPLETA ---
         const STAGES = [
-            'intro', 'neoclasicismo', 'contexto', 'espronceda_pirata', 
-            'espronceda_reo', 'becquer_rimas', 'becquer_leyendas', 
-            'rosalia', 'rivas', 'zorrilla', 'larra', 'finale'
+            'intro', 'neoclasicismo', 'contexto', 'cadalso_gotico', 'espronceda_pirata', 
+            'espronceda_reo', 'becquer_arpa', 'becquer_rimas_lIII', 
+            'becquer_leyenda', 'rosalia_follas', 'rivas_sino', 'zorrilla_tenorio', 
+            'larra_critica', 'finale'
         ];
 
         const CONTENT = {
             neoclasicismo: {
-                title: "Prólogo: La Razón Ilustrada",
+                title: "La Jaula de la Razón",
                 author: "Leandro Fdez. de Moratín",
-                text: "DON DIEGO: Ve aquí los frutos de la educación. Esto es lo que se llama criar bien a una niña: enseñarla a que mienta y oculte las pasiones más inocentes... Todo se permite, menos la sinceridad.",
-                explanation: "El Neoclasicismo buscaba la utilidad social. Moratín critica aquí la educación represiva que obliga a las jóvenes a la insinceridad.",
+                work: "El sí de las niñas",
+                text: "DON DIEGO: Ve aquí los frutos de la educación. Esto es lo que se llama criar bien a una niña: enseñarla a que mienta y oculte las pasiones más inocentes con una pérfida disimulación... / Se las autoriza para que finjan aborrecer lo que más desean... Todo se permite, menos la sinceridad. / ¡Maldita educación, que solo sirve para formar esclavos y traidores! ¡Ay de los que piensan que con el rigor se gobiernan los corazones! La obediencia ciega no es virtud, es miedo.",
+                explanation: "Moratín critica la educación represiva de la Ilustración, abriendo la puerta a la sinceridad emocional que definirá el Romanticismo.",
                 questions: [{
-                    instruction: "¿Qué valor fundamental se pierde según el texto?",
-                    options: ["La obediencia", "La sinceridad", "La elegancia"],
-                    answer: "la sinceridad"
+                    instruction: "¿Qué valor fundamental denuncia Don Diego que se pierde por culpa de la educación rígida?",
+                    options: ["La obediencia", "La sinceridad", "La cortesía"],
+                    answer: "La sinceridad"
                 }]
             },
             contexto: {
-                title: "I. El Origen: Sturm und Drang",
-                explanation: "El Romanticismo surgió como rechazo a la razón ilustrada, favoreciendo el 'genio' y la libertad individual.",
+                title: "I. El Grito de la Libertad",
+                author: "Manifiesto del Romanticismo",
+                work: "Espíritu de la Época",
+                text: "¡Libertad en el arte, libertad en la sociedad, he aquí el doble fin hacia el cual deben tender todos los espíritus consecuentes! / El Romanticismo no es sino el liberalismo en literatura. / El sentimiento debe romper las cadenas de la lógica fría. / La pasión es nuestra única ley y el corazón nuestra única brújula entre las sombras del mundo.",
+                explanation: "El Romanticismo no fue solo literatura, fue una revolución del YO. Tras el siglo de las luces, el hombre romántico prefiere la tormenta y la libertad absoluta.",
                 questions: [{
-                    instruction: "¿Qué movimiento prioriza el SENTIMIENTO frente a la RAZÓN?",
-                    options: ["Ilustración", "Romanticismo", "Renacimiento"],
-                    answer: "romanticismo"
+                    instruction: "¿Qué facultad humana se sitúa por encima de la Razón en este movimiento?",
+                    options: ["La Lógica", "El Sentimiento", "La Ciencia"],
+                    answer: "El Sentimiento"
+                }]
+            },
+            cadalso_gotico: {
+                title: "Noches Lúgubres",
+                author: "José Cadalso",
+                text: "Tediato: '¡Qué noche! La oscuridad, el silencio, el pavor de este lugar... El cielo parece conjurado contra mí. / ¡Oh, tú, amada mía, que yaces en este frío sepulcro! Voy a sacarte de él, a abrazar tus despojos, a morir sobre tu pecho de mármol. / El mundo me llama loco, pero mi locura es más noble que su cordura. Prefiero los gusanos que te devoran a la luz de un sol que ya no te ilumina.'",
+                explanation: "Considerada la primera obra gótica española, Cadalso explora el dolor extremo y la fascinación por la muerte.",
+                questions: [{
+                    instruction: "¿Qué macabra acción planea realizar Tediato movido por su desesperación?",
+                    type: "input",
+                    answer: "desenterrar",
+                    hint: "El protagonista quiere sacar a su amada del sepulcro."
                 }]
             },
             espronceda_pirata: {
                 title: "II. La Canción del Pirata",
                 author: "José de Espronceda",
-                text: "Que es mi barco mi tesoro, / que es mi dios la libertad, / mi ley, la fuerza y el viento, / mi única patria, la mar.",
-                explanation: "El pirata es el héroe romántico: un ser marginal que vive fuera de las leyes sociales.",
-                questions: [{
-                    instruction: "Completa: 'Que es mi barco mi _________'",
-                    type: "input",
-                    answer: "tesoro",
-                    hint: "Lee la primera línea del estribillo."
-                }]
-            },
-            becquer_rimas: {
-                title: "IV. Las Rimas de Bécquer",
-                author: "G.A. Bécquer",
-                text: "Volverán las oscuras golondrinas... / Pero aquellas que aprendieron nuestros nombres... / ¡esas no volverán! / ... / Volverán las tupidas madreselvas... / pero aquellas cuajadas de rocío... / ¡esas no volverán! / ... / Como yo te he querido... desengáñate: / ¡así no te querrán!",
-                explanation: "Bécquer contrasta los ciclos de la naturaleza (que regresan) con el amor humano (que es único e irrecuperable).",
+                text: "Con diez cañones por banda, / viento en popa, a toda vela, / no corta el mar, sino vuela / un velero bergantín... / Bajel pirata que llaman, / por su bravura, El Temido, / en todo mar conocido / del uno al otro confín. / Que es mi barco mi tesoro, / que es mi dios la libertad, / mi ley, la fuerza y el viento, / mi única patria, la mar. / Allá muevan feroz guerra / ciegos reyes / por un palmo más de tierra; / que yo tengo aquí por mío / cuanto abarca el mar bravío, / a quien nadie impuso leyes.",
+                explanation: "El pirata es el símbolo del rebelde romántico: vive al margen de la sociedad y no reconoce otra patria que la mar.",
                 questions: [
                     {
-                        instruction: "Ordena los elementos según aparecen en la Rima LIII (ej: 0,1,2):",
-                        type: "order",
-                        items: ["Golondrinas", "Madreselvas", "Amor mudo y de rodillas"],
-                        answer: "0,1,2",
-                        hint: "Orden: Aves, Plantas y finalmente el Sentimiento del poeta."
+                        instruction: "Descifra esta palabra clave del poema: **TREOOS**",
+                        type: "input",
+                        answer: "tesoro",
+                        hint: "Es lo que el pirata dice que es su barco."
+                    },
+                    {
+                        instruction: "¿Qué representa el mar para el pirata según el texto?",
+                        options: ["Su patria", "Su cárcel", "Su mercado"],
+                        answer: "Su patria"
                     }
                 ]
             },
-            // Se pueden añadir más siguiendo este patrón...
+            espronceda_reo: {
+                title: "III. El Reo de Muerte",
+                author: "José de Espronceda",
+                text: "Para un hombre que va a morir / el sol no alumbra, el viento no suena... / ¡Maldición a la mano que me encadena! / ¡Maldición al juez que me condenó! / ¿Por qué yo soy un reo y él es un juez? / ¿Por qué si la vida es un don del cielo, / me la quita el hombre con tanto anhelo... / ¡Y el verdugo?... El verdugo... ese hombre... / ¿Cómo pudo su alma nacer? / ¿Cómo pudo su madre en su seno / a ese monstruo de sangre tener?",
+                explanation: "Espronceda denuncia la injusticia social y la hipocresía de las leyes humanas.",
+                questions: [{
+                    instruction: "¿Cómo califica el reo al verdugo en los versos finales?",
+                    type: "input",
+                    answer: "monstruo de sangre",
+                    hint: "Lee la última línea citada del texto."
+                }]
+            },
+            becquer_arpa: {
+                title: "IV. El Arpa Olvidada",
+                author: "Gustavo Adolfo Bécquer",
+                work: "Rima VII",
+                text: "Del salón en el ángulo oscuro, / de su dueña tal vez olvidada, / silenciosa y cubierta de polvo / veíase el arpa. / ¡Cuánta nota dormía en sus cuerdas, / como el pájaro duerme en las ramas, / esperando la mano de nieve / que sabe arrancarlas! / ¡Ay!, pensé; ¡cuántas veces el genio / así duerme en el fondo del alma, / y una voz como Lázaro espera / que le diga: '¡Levántate y anda!'",
+                explanation: "Bécquer compara el arpa con el genio artístico: ambos necesitan inspiración para despertar.",
+                questions: [{
+                    instruction: "¿A qué figura bíblica menciona el poeta para referirse al despertar del genio?",
+                    type: "input",
+                    answer: "lazaro",
+                    hint: "Es quien recibió la orden de levantarse y andar."
+                }]
+            },
+            becquer_rimas_lIII: {
+                title: "V. Las Oscuras Golondrinas",
+                author: "Gustavo Adolfo Bécquer",
+                work: "Rima LIII",
+                text: "Volverán las oscuras golondrinas / en tu balcón sus nidos a colgar... / pero aquellas que el vuelo refrenaban / tu hermosura y mi dicha a contemplar... / ¡esas no volverán! / Volverán las tupidas madreselvas / de tu jardín las tapias a escalar... / pero aquellas cuajadas de rocío / cuyas gotas mirábamos temblar... / ¡esas no volverán! / Volverán del amor en tus oídos / las palabras ardientes a sonar... / pero como yo te he querido... desengáñate, / ¡así no te querrán!",
+                explanation: "El gran poema del desengaño amoroso: lo material vuelve, pero lo espiritual y único muere para siempre.",
+                questions: [{
+                    instruction: "Ordena los elementos según su aparición en el poema (0,1,2):",
+                    type: "order",
+                    items: ["Las golondrinas", "Las madreselvas", "Las palabras de amor"],
+                    answer: "0,1,2",
+                    hint: "Aves, plantas y luego el habla."
+                }]
+            },
+            becquer_leyenda: {
+                title: "VI. El Rayo de Luna",
+                author: "G.A. Bécquer",
+                text: "Manrique era noble, amaba la soledad y buscaba la belleza absoluta. Una noche en Soria creyó ver una mujer de traje blanco entre los árboles. La persiguió por callejones, orillas y montes, gritando su amor. Al final, exhausto, vio que lo que perseguía era un simple rayo de luna que el viento movía entre el follaje. 'El amor es un rayo de luna', concluyó antes de hundirse en su propia melancolía.",
+                explanation: "Simboliza el idealismo extremo: el romántico prefiere la ilusión a la cruda realidad.",
+                questions: [{
+                    instruction: "¿Qué descubre Manrique que era en realidad la mujer que perseguía?",
+                    type: "input",
+                    answer: "rayo de luna",
+                    hint: "Está en el título y en el clímax de la historia."
+                }]
+            },
+            rosalia_follas: {
+                title: "VII. Negra Sombra",
+                author: "Rosalía de Castro",
+                text: "Cando penso que te fuches, / negra sombra que me asombras, / ó pé dos meus cabezales / tornas facéndome mofa. / Se imaxino que te es de ir, / no mesmo sol te me amosas, / i eres a estrela que brila, / i eres o vento que zoa. / Todo é soidade, todo é desdicha...",
+                explanation: "La 'Negra Sombra' representa la melancolía que acompaña a Rosalía en cada elemento de la naturaleza.",
+                questions: [{
+                    instruction: "¿A qué elemento de la habitación vuelve la sombra para 'mofarse' de la autora?",
+                    options: ["A la ventana", "A su almohada/cama", "Al espejo"],
+                    answer: "A su almohada/cama"
+                }]
+            },
+            rivas_sino: {
+                title: "VIII. La Fuerza del Sino",
+                author: "Duque de Rivas",
+                text: "DON ÁLVARO: '¡Inútil es que quiera el hombre luchar con su destino! ¡El cielo me persigue! He matado al padre de mi Leonor, he matado a su hermano... No queda más que la nada. ¡Mundo maldito, trágate mis despojos!' (Se lanza al vacío desde un precipicio).",
+                explanation: "El 'Sino' es el destino fatal e inevitable que persigue al héroe romántico hasta la muerte.",
+                questions: [{
+                    instruction: "¿Cómo termina Don Álvaro su lucha contra la fuerza del sino?",
+                    options: ["Huyendo a América", "Suicidándose", "Haciéndose monje"],
+                    answer: "Suicidándose"
+                }]
+            },
+            zorrilla_tenorio: {
+                title: "IX. Don Juan Tenorio",
+                author: "José Zorrilla",
+                text: "DON JUAN: '¡Ah! ¿No es cierto, ángel de amor, / que en esta apartada orilla / más pura la luna brilla / y se respira mejor? / Esta aura que vaga, llena / de los sencillos olores / de las campesinas flores / que brota esa orilla amena... / ¿No es cierto, paloma mía, / que están respirando amor?'",
+                explanation: "La famosa escena del sofá, donde el seductor por fin siente amor real por la joven Inés.",
+                questions: [{
+                    instruction: "¿Con qué ave compara Don Juan a Doña Inés en estos versos?",
+                    type: "input",
+                    answer: "paloma",
+                    hint: "Fíjate en la penúltima línea del texto."
+                }]
+            },
+            larra_critica: {
+                title: "X. El Desengaño de Larra",
+                author: "Mariano José de Larra",
+                text: "- ¿Cuándo veré al director? - Vuelva usted mañana. / - ¿Estarán los papeles? - Vuelva usted mañana. / Aquel 'mañana' era la tumba de todas mis esperanzas... La pereza es nuestro pecado nacional. Escribir en Madrid es llorar, es decir adiós a la esperanza en cada esquina de esta ciudad muerta.",
+                explanation: "Larra representa el romanticismo social: el dolor por una España que no avanza.",
+                questions: [{
+                    instruction: "¿Cómo define Larra el concepto de 'Mañana'?",
+                    options: ["La esperanza del futuro", "La tumba de las esperanzas", "Un nuevo comienzo"],
+                    answer: "La tumba de las esperanzas"
+                }]
+            },
             finale: {
-                title: "¡LIBERTAD!",
-                text: "Has superado las sombras del siglo XIX."
+                title: "El Despertar",
+                text: "Has navegado por las oscuras aguas del Romanticismo. Las sombras se disipan y la razón vuelve a tu mente, pero la pasión de estos versos quedará grabada en tu memoria.",
+                explanation: "Has completado con éxito la Escape Room Literaria."
             }
         };
 
-        // --- ESTADO DEL JUEGO ---
-        let currentState = {
+        // --- MOTOR DEL JUEGO ---
+        let state = {
             stage: 'intro',
             subStage: 0,
-            showText: false,
+            feedback: '',
             hintVisible: false,
             isExplaining: false,
-            feedback: ''
+            showText: false,
+            sanity: 100
         };
 
-        // --- LÓGICA ---
         function normalize(str) {
             if (!str) return "";
             return str.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ñ/g, "n");
         }
 
         function handleAction(val) {
-            const stageData = CONTENT[currentState.stage];
-            const q = stageData.questions[currentState.subStage];
+            const data = CONTENT[state.stage];
+            if (!data || !data.questions) return;
+            const q = data.questions[state.subStage];
             
-            let correct = false;
+            let isCorrect = false;
             if (q.type === 'order') {
-                correct = val.replace(/\s+/g, '') === q.answer;
+                isCorrect = val.replace(/\s+/g, '') === q.answer;
             } else {
-                correct = normalize(val) === normalize(q.answer);
+                isCorrect = normalize(val) === normalize(q.answer);
             }
 
-            if (correct) {
-                currentState.feedback = "¡Brillante!";
-                if (currentState.subStage < stageData.questions.length - 1) {
-                    currentState.subStage++;
-                    render();
+            if (isCorrect) {
+                state.feedback = "¡Correcto! La llave gira en la cerradura.";
+                state.hintVisible = false;
+                if (state.subStage < data.questions.length - 1) {
+                    state.subStage++;
                 } else {
-                    currentState.isExplaining = true;
-                    render();
+                    state.isExplaining = true;
                 }
             } else {
-                currentState.feedback = "Esa llave no encaja...";
+                state.feedback = "Esa clave es incorrecta... El tiempo se agota.";
+                state.sanity = Math.max(0, state.sanity - 10);
+            }
+            render();
+        }
+
+        function nextStage() {
+            const idx = STAGES.indexOf(state.stage);
+            const nextKey = STAGES[idx + 1];
+            if (nextKey) {
+                state.stage = nextKey;
+                state.subStage = 0;
+                state.isExplaining = false;
+                state.feedback = '';
+                state.hintVisible = false;
+                state.showText = false;
                 render();
             }
         }
 
-        function nextStage() {
-            const idx = STAGES.indexOf(currentState.stage);
-            currentState.stage = STAGES[idx + 1] || 'finale';
-            currentState.subStage = 0;
-            currentState.isExplaining = false;
-            currentState.showText = false;
-            currentState.feedback = '';
-            currentState.hintVisible = false;
-            render();
-        }
-
-        // --- RENDERIZADO ---
         function render() {
-            const container = document.getElementById('game-container');
-            const data = CONTENT[currentState.stage];
+            const app = document.getElementById('app');
+            const data = CONTENT[state.stage];
 
-            if (currentState.stage === 'intro') {
-                container.innerHTML = `
-                    <div class="text-center space-y-8 animate-fade-in">
-                        <i data-lucide="skull" class="w-32 h-32 mx-auto text-red-950 opacity-80"></i>
-                        <h1 class="text-6xl font-gothic font-bold text-red-950">SOMBRAS ROMÁNTICAS</h1>
-                        <p class="text-xl font-serif-vintage italic border-x-4 border-red-900 px-6 py-2">Escapa del siglo XIX demostrando tu conocimiento literario.</p>
-                        <button onclick="nextStage()" class="px-12 py-4 bg-red-950 text-white font-gothic text-2xl hover:bg-black transition-all shadow-xl">ABRIR LIBRO</button>
+            if (state.stage === 'intro') {
+                app.innerHTML = `
+                    <div class="flex-1 flex flex-col items-center justify-center space-y-12 fade-in">
+                        <i data-lucide="skull" class="w-44 h-44 text-red-900 drop-shadow-[0_0_20px_rgba(255,0,0,0.5)] animate-pulse"></i>
+                        <h1 class="text-8xl font-gothic font-black text-white glow-gold text-center leading-none">SOMBRAS<br/><span class="text-red-800">ROMÁNTICAS</span></h1>
+                        <p class="text-2xl italic text-gray-400 font-serif-vintage tracking-widest">Antología Interactiva del Siglo XIX</p>
+                        <button onclick="nextStage()" class="btn-gothic px-20 py-8 text-3xl">ABRIR EL LIBRO</button>
                     </div>
                 `;
-            } else if (currentState.isExplaining) {
-                container.innerHTML = `
-                    <div class="space-y-6 animate-fade-in">
-                        <div class="bg-amber-50 p-8 border-4 border-red-900 shadow-xl">
-                            <h3 class="text-2xl font-gothic text-red-950 mb-4 underline">Sabiduría Literaria</h3>
-                            <p class="text-lg font-serif-vintage italic">${data.explanation}</p>
+            } else if (state.isExplaining) {
+                app.innerHTML = `
+                    <div class="flex-1 flex flex-col items-center justify-center fade-in px-4">
+                        <div class="parchment-card w-full max-w-4xl p-12 burn-edge border-l-[20px] border-red-950">
+                            <h2 class="text-4xl font-gothic text-red-900 mb-8 border-b-2 border-red-200 pb-4 flex items-center gap-3">
+                                <i data-lucide="book-open"></i> Conocimiento Arcano
+                            </h2>
+                            <p class="text-2xl font-serif-vintage leading-relaxed mb-10 text-gray-800 italic">"${data.explanation}"</p>
+                            <button onclick="nextStage()" class="btn-gothic w-full py-6 text-2xl flex items-center justify-center gap-4">
+                                CONTINUAR <i data-lucide="chevron-right"></i>
+                            </button>
                         </div>
-                        <button onclick="nextStage()" class="w-full py-4 bg-red-950 text-white font-gothic text-xl flex items-center justify-center gap-2">
-                            SIGUIENTE CAPÍTULO <i data-lucide="unlock"></i>
-                        </button>
                     </div>
                 `;
-            } else if (currentState.stage === 'finale' || !data) {
-                container.innerHTML = `
-                    <div class="text-center space-y-6 animate-fade-in">
-                        <i data-lucide="landmark" class="w-32 h-32 mx-auto text-amber-700"></i>
-                        <h2 class="text-6xl font-gothic text-red-950 font-bold">¡LIBERTAD!</h2>
-                        <button onclick="location.reload()" class="px-8 py-3 bg-black text-white font-bold uppercase tracking-widest">Reiniciar</button>
+            } else if (state.stage === 'finale') {
+                app.innerHTML = `
+                    <div class="text-center space-y-12 fade-in">
+                        <i data-lucide="feather" class="w-44 h-44 mx-auto text-amber-500 drop-shadow-lg"></i>
+                        <h2 class="text-7xl font-gothic text-white glow-gold uppercase tracking-tighter">${data.title}</h2>
+                        <div class="parchment-card p-10 max-w-3xl mx-auto rotate-[-1deg] border-dashed border-4 border-red-900">
+                             <p class="text-2xl font-serif-vintage italic">${data.text}</p>
+                        </div>
+                        <button onclick="location.reload()" class="btn-gothic px-12 py-5 text-xl">VOLVER AL SIGLO XXI</button>
                     </div>
                 `;
             } else {
-                const q = data.questions[currentState.subStage];
-                let inputHtml = '';
-
-                if (q.type === 'order') {
-                    inputHtml = `
-                        <div class="space-y-2 mb-4">
-                            ${q.items.map((item, i) => `<div class="p-2 bg-gray-50 border font-serif-vintage"><b>[${i}]</b> ${item}</div>`).join('')}
-                        </div>
-                        <input id="ans-input" type="text" placeholder="Ej: 0,1,2" class="w-full p-3 border-2 border-red-900 text-center font-mono">
-                    `;
-                } else if (q.options) {
-                    inputHtml = q.options.map(opt => `
-                        <button onclick="handleAction('${opt}')" class="w-full p-4 mb-2 border-2 hover:bg-red-50 text-left font-serif-vintage transition-all">${opt}</button>
-                    `).join('');
-                } else {
-                    inputHtml = `<input id="ans-input" type="text" placeholder="Escribe aquí..." class="w-full p-4 border-b-4 border-red-900 bg-transparent text-2xl outline-none font-serif-vintage">`;
-                }
-
-                container.innerHTML = `
-                    <div class="space-y-6 animate-fade-in">
-                        <div class="flex justify-between items-end border-b-2 border-red-900 pb-2">
-                            <h2 class="text-3xl font-gothic text-red-950">${data.title}</h2>
-                            <span class="text-xs font-bold uppercase">${currentState.stage}</span>
-                        </div>
-
-                        ${data.text ? `
-                            <div class="relative group">
-                                <div id="poem-text" class="p-6 bg-white border-l-8 border-red-900 shadow-md italic font-serif-vintage text-lg leading-relaxed ${currentState.showText ? '' : 'blur-text'}">
-                                    ${data.text.split('/').join('<br>')}
+                const q = data.questions[state.subStage];
+                app.innerHTML = `
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 fade-in">
+                        <!-- PANEL LITERARIO -->
+                        <div class="parchment-card p-10 flex flex-col justify-between burn-edge max-h-[85vh] lg:max-h-none overflow-y-auto custom-scrollbar">
+                            <div>
+                                <div class="flex items-center gap-2 mb-4 opacity-70">
+                                    <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                                    <span class="text-xs font-bold uppercase tracking-widest">${data.author || 'Anónimo'}</span>
+                                    ${data.work ? `<span class="text-xs italic">— ${data.work}</span>` : ''}
                                 </div>
-                                ${!currentState.showText ? `
-                                    <button onclick="currentState.showText=true; render()" class="absolute inset-0 m-auto h-fit w-fit px-6 py-3 bg-red-950 text-white font-gothic flex items-center gap-2 shadow-2xl">
-                                        <i data-lucide="eye"></i> LEER PERGAMINO
-                                    </button>
-                                ` : ''}
+                                <h3 class="text-4xl font-serif-vintage font-bold text-red-950 mb-6 border-b-4 border-red-900 inline-block">${data.title}</h3>
+                                
+                                <div class="relative group mt-4">
+                                    <div class="text-2xl font-serif-vintage leading-relaxed italic space-y-4 ${state.showText ? '' : 'blur-text'}">
+                                        ${data.text ? data.text.split(' / ').map(line => `<p class="border-l-4 border-red-200 pl-6">${line}</p>`).join('') : ''}
+                                    </div>
+                                    ${!state.showText ? `
+                                        <button onclick="state.showText=true; render()" class="absolute inset-0 m-auto w-fit h-fit btn-gothic px-8 py-4 shadow-2xl flex items-center gap-3">
+                                            <i data-lucide="eye"></i> LEER MANUSCRITO
+                                        </button>
+                                    ` : ''}
+                                </div>
                             </div>
-                        ` : ''}
-
-                        <div class="bg-white p-6 border-2 border-red-50 shadow-inner space-y-4">
-                            <p class="text-xl font-serif-vintage font-bold"><i data-lucide="target" class="inline w-5 h-5 mr-2"></i>${q.instruction}</p>
-                            ${inputHtml}
-                            ${!q.options ? `<button onclick="handleAction(document.getElementById('ans-input').value)" class="w-full py-4 bg-red-900 text-white font-bold uppercase tracking-widest mt-4">Resolver</button>` : ''}
                             
-                            <div class="text-center mt-4">
-                                <p class="text-red-700 font-bold mb-2">${currentState.feedback}</p>
-                                <button onclick="currentState.hintVisible=!currentState.hintVisible; render()" class="text-xs text-gray-400 uppercase tracking-tighter flex items-center gap-1 mx-auto">
-                                    <i data-lucide="help-circle" class="w-3 h-3"></i> Pista
+                            <div class="mt-8 pt-6 border-t border-red-900/20">
+                                <div class="flex justify-between text-xs font-bold text-red-950 mb-2">
+                                    <span>CORDURA ROMÁNTICA</span>
+                                    <span>${state.sanity}%</span>
+                                </div>
+                                <div class="w-full bg-red-900/10 h-3 rounded-full overflow-hidden">
+                                    <div class="bg-red-800 h-full transition-all duration-1000" style="width: ${state.sanity}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANEL DE ACERTIJO -->
+                        <div class="bg-black/60 p-10 border-4 border-red-900 text-white backdrop-blur-lg flex flex-col justify-center shadow-2xl">
+                            <h4 class="text-xs uppercase tracking-[0.5em] text-red-500 mb-6 font-gothic">Desafío Actual</h4>
+                            <p class="text-3xl font-serif-vintage mb-10 leading-snug">${q.instruction}</p>
+                            
+                            <div class="space-y-6">
+                                ${q.options ? `
+                                    <div class="grid gap-4">
+                                        ${q.options.map(opt => `
+                                            <button onclick="handleAction('${opt}')" class="p-6 border-2 border-white/20 hover:border-red-500 hover:bg-red-950/40 text-left text-xl font-serif-vintage transition-all flex justify-between items-center group">
+                                                ${opt} <i data-lucide="chevron-right" class="opacity-0 group-hover:opacity-100 transition-all"></i>
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                ` : `
+                                    <div class="mb-4">
+                                        ${q.type === 'order' ? `
+                                            <div class="space-y-3 mb-8">
+                                                ${q.items.map((it, i) => `<div class="p-4 bg-white/5 border border-white/10 text-xl font-serif-vintage flex justify-between"><span><b class="text-red-500 mr-4">[${i}]</b> ${it}</span> <i data-lucide="hash" class="w-4 h-4 opacity-20"></i></div>`).join('')}
+                                            </div>
+                                        ` : ''}
+                                        <input id="input-box" type="text" placeholder="Escribe tu respuesta..." class="w-full p-6 bg-white text-black text-3xl font-serif-vintage outline-none border-b-8 border-red-800 focus:bg-gray-100 transition-colors" autofocus>
+                                    </div>
+                                    <button onclick="handleAction(document.getElementById('input-box').value)" class="btn-gothic py-6 w-full text-2xl font-bold">DESCIFRAR</button>
+                                `}
+                            </div>
+
+                            <div class="mt-10 text-center border-t border-white/10 pt-6">
+                                <p class="text-2xl font-bold mb-4 ${state.feedback.includes('Correcto') ? 'text-green-400' : 'text-red-400'}">${state.feedback}</p>
+                                <button onclick="state.hintVisible=!state.hintVisible; render()" class="text-xs text-gray-500 hover:text-red-500 flex items-center justify-center gap-2 mx-auto uppercase tracking-widest">
+                                    <i data-lucide="help-circle" class="w-4 h-4"></i> ${state.hintVisible ? 'Ocultar Pista' : 'Auxilio Técnico'}
                                 </button>
-                                ${currentState.hintVisible ? `<p class="mt-2 text-sm italic text-amber-800 bg-amber-50 p-2 border border-amber-200">${q.hint || 'Busca la respuesta en el texto.'}</p>` : ''}
+                                ${state.hintVisible ? `<div class="mt-4 p-4 bg-red-950/40 border border-red-900 text-amber-200 italic text-lg animate-fade-in">${q.hint}</div>` : ''}
                             </div>
                         </div>
                     </div>
                 `;
             }
             lucide.createIcons();
+            const ib = document.getElementById('input-box');
+            if (ib) {
+                ib.focus();
+                ib.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(ib.value); });
+            }
         }
 
-        // Iniciar
         window.onload = render;
     </script>
 </body>
