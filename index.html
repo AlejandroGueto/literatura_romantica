@@ -320,11 +320,37 @@
 
             if (state.stage === 'intro') {
                 app.innerHTML = `
-                    <div class="flex-1 flex flex-col items-center justify-center space-y-12 fade-in">
-                        <i data-lucide="skull" class="w-44 h-44 text-red-900 drop-shadow-[0_0_20px_rgba(255,0,0,0.5)] animate-pulse"></i>
-                        <h1 class="text-8xl font-gothic font-black text-white glow-gold text-center leading-none">SOMBRAS<br/><span class="text-red-800">ROMÁNTICAS</span></h1>
-                        <p class="text-2xl italic text-gray-400 font-serif-vintage tracking-widest">Antología Interactiva del Siglo XIX</p>
-                        <button onclick="nextStage()" class="btn-gothic px-20 py-8 text-3xl">ABRIR EL LIBRO</button>
+                    <div class="flex-1 flex flex-col items-center justify-center space-y-8 py-8 fade-in overflow-y-auto custom-scrollbar h-full w-full">
+                        <div class="text-center">
+                            <i data-lucide="skull" class="w-24 h-24 text-red-900 mx-auto drop-shadow-[0_0_20px_rgba(255,0,0,0.5)] animate-pulse"></i>
+                            <h1 class="text-6xl font-gothic font-black text-white glow-gold text-center leading-tight mt-4">SOMBRAS<br/><span class="text-red-800 text-5xl">ROMÁNTICAS</span></h1>
+                            <p class="text-xl italic text-gray-400 font-serif-vintage tracking-widest mt-2">Antología Interactiva del Siglo XIX</p>
+                        </div>
+
+                        <!-- PANEL DE PREPARACIÓN -->
+                        <div class="w-full max-w-4xl space-y-6">
+                            <h2 class="text-amber-500 font-gothic text-center text-2xl uppercase tracking-widest underline decoration-red-900">Antes de comenzar</h2>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Vídeo de YouTube -->
+                                <div class="parchment-card p-4 border-2 border-red-900 rounded shadow-2xl flex flex-col">
+                                    <p class="text-red-950 font-bold mb-2 text-center font-gothic text-xs uppercase">Vídeo de Introducción</p>
+                                    <div class="aspect-video w-full bg-black rounded border border-red-900 overflow-hidden">
+                                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/dd66PL7txK0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                                
+                                <!-- Presentación Drive -->
+                                <div class="parchment-card p-4 border-2 border-red-900 rounded shadow-2xl flex flex-col">
+                                    <p class="text-red-950 font-bold mb-2 text-center font-gothic text-xs uppercase">Presentación del Siglo XIX</p>
+                                    <div class="h-full bg-black rounded border border-red-900 overflow-hidden min-h-[180px]">
+                                        <iframe src="https://drive.google.com/file/d/1xQwuDyUZ1zR2KqI9UnR-a62ASQR8sr_3/preview" width="100%" height="100%" allow="autoplay"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="nextStage()" class="btn-gothic px-16 py-6 text-2xl mt-4 shadow-2xl">ABRIR EL LIBRO</button>
                     </div>
                 `;
             } else if (state.isExplaining) {
@@ -343,13 +369,23 @@
                 `;
             } else if (state.stage === 'finale') {
                 app.innerHTML = `
-                    <div class="text-center space-y-12 fade-in">
-                        <i data-lucide="feather" class="w-44 h-44 mx-auto text-amber-500 drop-shadow-lg"></i>
-                        <h2 class="text-7xl font-gothic text-white glow-gold uppercase tracking-tighter">${data.title}</h2>
-                        <div class="parchment-card p-10 max-w-3xl mx-auto rotate-[-1deg] border-dashed border-4 border-red-900">
+                    <div class="text-center space-y-8 py-8 fade-in overflow-y-auto custom-scrollbar h-full w-full flex flex-col items-center">
+                        <i data-lucide="feather" class="w-32 h-32 text-amber-500 drop-shadow-lg shrink-0"></i>
+                        <h2 class="text-6xl font-gothic text-white glow-gold uppercase tracking-tighter">${data.title}</h2>
+                        
+                        <div class="parchment-card p-8 max-w-3xl border-dashed border-4 border-red-900">
                              <p class="text-2xl font-serif-vintage italic">${data.text}</p>
                         </div>
-                        <button onclick="location.reload()" class="btn-gothic px-12 py-5 text-xl">VOLVER AL SIGLO XXI</button>
+
+                        <!-- Infografía Final -->
+                        <div class="w-full max-w-5xl px-4 space-y-4">
+                            <h3 class="text-amber-500 font-gothic text-xl uppercase tracking-widest">Resumen del Viaje Literario</h3>
+                            <div class="w-full h-[600px] bg-black rounded border-2 border-red-900 overflow-hidden shadow-2xl">
+                                <iframe src="https://drive.google.com/file/d/1UHXZ5M3dN8nfqCsn7QVnq7aBOK22kMdV/preview" width="100%" height="100%" allow="autoplay"></iframe>
+                            </div>
+                        </div>
+
+                        <button onclick="location.reload()" class="btn-gothic px-12 py-5 text-xl mt-4">VOLVER AL SIGLO XXI</button>
                     </div>
                 `;
             } else {
